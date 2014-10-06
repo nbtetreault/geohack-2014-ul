@@ -15,18 +15,10 @@
 <script>
 function init(){
 var pointsInterets;
-//Récupérer les points d'intérets
-$.ajax({
-	url:'',
-	success:function(data, textStatus, jqXHR ){
-		pointsInterets = data;
-	},
-	error:function(){
-	},
-	complete:function(){
-	}
-	);
-
+$.getJSON("features/points-interet.geojson", function(data) {
+    console.log(data);
+	pointsInterets = data;
+});
 
 var map = L.map('map', {
 center: [46.7829, -71.2847],
