@@ -13,11 +13,20 @@
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 
 <script>
+
 function init(){
-var pointsInterets;
-$.getJSON("features/points-interet.geojson", function(data) {
+var defi_dd_trajet;
+$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet", function(data) {
     console.log(data);
-	pointsInterets = data;
+	defi_dd_trajet = data;
+	var trajet = L.geoJson(defi_dd_trajet,
+	{style:
+	{
+		"color":"green",
+		"opacity":0.5
+	}}
+	).addTo(map);
+	map.fitBounds(coordsToLatLng.coordsToLatLng());
 });
 
 var map = L.map('map', {
