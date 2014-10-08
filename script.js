@@ -55,8 +55,9 @@ $.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM p
 						}
 						
 						var popup = L.popup({
-							'keepInView':true
-						}).setContent(titre + images + description);
+							'keepInView':true,
+							'maxHeight':1000
+						}).setContent(titre + images + description + description);
 						
 							layer.bindPopup(popup);
 					}
@@ -78,7 +79,7 @@ function init(){
 
 	map = L.map('map', {
 		center: [46.7829, -71.2847],
-		zoom: 14
+		zoom: 16
 	});
 
 	var myIcon = L.icon({
@@ -111,7 +112,7 @@ function init(){
 		if(!map.hasLayer(markerSuivi)){
 			markerSuivi.addTo(map)
 		}
-	
+		
 
 		markerSuivi.setLatLng(e.latlng).addTo(map);
 	}
