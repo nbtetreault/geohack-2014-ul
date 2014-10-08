@@ -35,10 +35,28 @@ $.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM p
 			style:myStyle,
 			onEachFeature:function (feature, layer) {
 				
-					if(feature.properties && feature.properties.description){
-						layer.bindPopup(feature.properties.description);
-					//	layer.setIcon();
+					if(feature.properties){
+						var description = '';
+						var images = '';
+						var titre = '';
+						if(feature.properties.description){
+							description = feature.properties.description;
+						}
+						
+						
+						if(feature.properties.name){
+							titre = '<h3>'+feature.properties.name+'</h3>';
+						}
+						
+						
+						if(feature.properties.images){
+							images = '<img width="100%" src="' + feature.properties.images + '">';
+						}
+							layer.bindPopup(titre + images + description);
 					}
+					
+					
+				
 				}
 
 			}
@@ -57,8 +75,15 @@ function init(){
 		zoom: 14
 	});
 
-	markerSuivi = L.Marker([46.7829, -71.2847], {
-		'clickable':false
+	var myIcon = L.icon({
+		iconUrl: 'personne.png',
+		iconRetinaUrl: 'personne.png',
+		iconSize: [32, 54],
+		iconAnchor: [32, 54]
+	});
+	markerSuivi = L.marker([46.7829, -71.2847], {
+		'clickable':false,
+		'icon':myIcon
 		});
 
 	chargerTrajet();
@@ -88,9 +113,8 @@ function init(){
 	map.on('locationfound', onLocationFound);
 
 	function onLocationError(e) {
-
+		swal("Localisation non trouvée!", "On a pas pu trouver ta localisation. Tu es redirigé vers le campus de l'UL.");
 		map.fitBounds(defi_dd_pi.getBounds());
-	//	map.setView(L.latLng(46.7811, -71.2736), 16);
 		
 	}
 
