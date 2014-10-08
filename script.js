@@ -3,19 +3,19 @@ var defi_dd_trajet;
 var defi_dd_pi;
 var defi_dd_arret;
 var suiviActive;
+var markerSuivi;
 
 function chargerTrajet(){
 	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet", function(data) {
 		
-		defi_dd_trajet = data;
-		var trajet = L.geoJson(defi_dd_trajet,
+		defi_dd_trajet = L.geoJson(data,
 		{style:
 		{
 			"color":"green",
 			"opacity":0.5
 		}}
 		).addTo(map);
-	//	map.fitBounds(coordsToLatLng.coordsToLatLng());
+
 	});
 }
 
@@ -88,7 +88,10 @@ function init(){
 		zoom: 14
 	});
 
-	
+	markerSuivi = L.Marker({
+		'clickable':false
+		
+		});
 	chargerTrajet();
 	chargerArret();
 	chargerPI();
@@ -107,20 +110,24 @@ function init(){
 
 	function onLocationFound(e) {
 	
-	
+		L.Marker(e.latlng).addTo(map);
 	/*
 		var radius = e.accuracy / 2;
 
 		L.marker(e.latlng).addTo(map)
 			.bindPopup("You are within " + radius + " meters from this point").openPopup();
 */
-		L.Marker(e.latlng).addTo(map);
+
+		markerSuivi.setLatLng(e.latlng);
 	}
 
 	map.on('locationfound', onLocationFound);
 
 	function onLocationError(e) {
-		alert(e.message);
+
+
+		map.setView(L.latLng(46.7811, -71.2736), 16);
+		
 	}
 
 	map.on('locationerror', onLocationError);
@@ -129,29 +136,5 @@ function init(){
 }
 
 function toggleSuivi(){
- map.locate({watch: true})
+	map.locate({watch: true})
 }
-
-
-
-L.Control.SuiviLocalisation = L.Control.extend({
-    options: {
-        position: 'topright',
-    },
-
-    onAdd: function (map) {
-        var controlDiv = L.DomUtil.create('div', 'leaflet-control-suiviLocalisation');
-        L.DomEvent
-            .addListener(controlDiv, 'click', L.DomEvent.stopPropagation)
-            .addListener(controlDiv, 'click', L.DomEvent.preventDefault)
-        .addListener(controlDiv, 'click', function () { MapShowCommand(); });
-	alert("click");
-       // var controlUI = L.DomUtil.create('div', 'leaflet-control-command-interior', controlDiv);
-       // controlUI.title = 'Map Commands';
-        return controlDiv;
-    }
-});
-
-L.control.suiviLocalisation = function (options) {
-    return new L.Control.SuiviLocalisation(options);
-};
