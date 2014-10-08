@@ -1,7 +1,7 @@
 var map;
 var defi_dd_trajet;
 var defi_dd_pi;
-var suiviActive;
+var suiviActive = true;
 var markerSuivi;
 var controles;
 
@@ -120,9 +120,13 @@ function init(){
 		if(!map.hasLayer(markerSuivi)){
 			markerSuivi.addTo(map)
 		}
-		
+	
 
 		markerSuivi.setLatLng(e.latlng).addTo(map);
+		
+		if(suiviActive){
+			map.setView(e.latlng);
+		}
 	}
 
 	map.on('locationfound', onLocationFound);
@@ -135,7 +139,7 @@ function init(){
 
 	map.on('locationerror', onLocationError);
 	
-	L.easyButton( "fa-compass", toggleSuivi , "Activer/désactiver le suivi",map );
+	L.easyButton( "fa-compass", activerLocalisation , "Activer/désactiver le suivi",map );
 	
 	map.on('popupopen', function(e){
 	  controles.removeFrom(map);
@@ -146,19 +150,17 @@ function init(){
 
 }
 
-function toggleSuivi(){
-	if(map._locateOptions.watch){
-		map.stopLocate();
-		console.log("désactiver la géolocalisation");
-	}else{
-		activerLocalisation();
-		console.log("activer la géolocalisation");
-	}
-	
+function activerLocalisation(){
+	suiviActive = true;
+	map.locate({
+		watch: true, 
+		enableHighAccuracy:true,
+		timeout:3000
+		});
+
 }
 
-function activerLocalisation(){
-	map.locate({watch: true,enableHighAccuracy:true,timeout:3000});
+function majPositionMarker(e){
 
 }
 
