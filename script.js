@@ -56,8 +56,8 @@ $.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM p
 						
 						var popup = L.popup({
 							'keepInView':true,
-							'maxHeight':1000
-						}).setContent(titre + '<div style="overflow:auto">' + images + description + description + '</div>');
+							maxHeight:500
+						}).setContent(titre + images + description + description);
 						
 							layer.bindPopup(popup);
 					}
