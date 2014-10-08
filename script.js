@@ -1,7 +1,6 @@
 var map;
 var defi_dd_trajet;
 var defi_dd_pi;
-var defi_dd_arret;
 var suiviActive;
 var markerSuivi;
 
@@ -19,35 +18,6 @@ function chargerTrajet(){
 	});
 	
 
-}
-
-function chargerArret(){
-	$.getJSON("", function(data) {
-		
-		console.log(data);
-		var myStyle = {
-			"color": "#ff7800",
-			"weight": 5,
-			"opacity": 0.65
-		};
-
-		defi_dd_arret = L.geoJson(data,{
-			style:myStyle,
-			onEachFeature:function (feature, layer) {
-					//Récupérer le html
-					var contenuPopup = "test";
-					//if (feature.properties && feature.properties.popupContent) {
-					if(contenuPopup){
-						layer.bindPopup(contenuPopup);
-					//	layer.setIcon();
-					}
-				}
-
-			}
-	
-		).addTo(map);
-
-	});
 }
 
 function chargerPI(){
@@ -91,7 +61,7 @@ function init(){
 		'clickable':false
 		
 		});
-	chargerArret();
+
 	chargerTrajet();
 	chargerPI();
 
@@ -107,8 +77,10 @@ function init(){
 	
 
 	function onLocationFound(e) {
-		
-	
+		markerSuivi.setLatLng(e.latlng);
+		if(!map.hasLayer(markerSuivi)){
+			markerSuivi.addTo(map)
+		}
 	
 
 		markerSuivi.setLatLng(e.latlng).addTo(map);
@@ -142,6 +114,6 @@ function toggleSuivi(){
 }
 
 function activerLocalisation(){
-map.locate({watch: true,enableHighAccuracy:true,timeout:3000});
+	map.locate({watch: true,enableHighAccuracy:true,timeout:3000});
 
 }
