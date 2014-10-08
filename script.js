@@ -50,9 +50,14 @@ $.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM p
 						
 						
 						if(feature.properties.images){
-							images = '<img width="100%" src="' + feature.properties.images + '">';
+							images = '<img width="100%" src="./fiches/images/' + feature.properties.images + '">';
 						}
-							layer.bindPopup(titre + images + description);
+						
+						var popup = L.popup({
+							'keepInView':true
+						}).setContent(titre + images + description);
+						
+							layer.bindPopup(popup);
 					}
 					
 					
