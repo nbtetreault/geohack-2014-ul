@@ -3,6 +3,7 @@ var defi_dd_trajet;
 var defi_dd_pi;
 var suiviActive;
 var markerSuivi;
+var controles;
 
 function chargerTrajet(){
 	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet", function(data) {
@@ -102,7 +103,7 @@ function init(){
 
 	var baseMaps = {"OSM" : osm, "Google Maps": ggl};
 	var overlayMaps = {};
-	L.control.layers(baseMaps, overlayMaps).addTo(map);
+	controles = L.control.layers(baseMaps, overlayMaps).addTo(map);
 	
 
 	function onLocationFound(e) {
@@ -127,6 +128,12 @@ function init(){
 	
 	L.easyButton( "fa-compass", toggleSuivi , "Activer/désactiver le suivi",map );
 	
+	map.on('popupopen', function(e){
+	  controles.removeFrom(map);
+	});
+	map.on('popupclose', function(e){
+	  controles.addTo(map);
+	});
 
 }
 
@@ -145,3 +152,4 @@ function activerLocalisation(){
 	map.locate({watch: true,enableHighAccuracy:true,timeout:3000});
 
 }
+
