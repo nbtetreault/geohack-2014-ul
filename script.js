@@ -57,7 +57,7 @@ function init(){
 		zoom: 14
 	});
 
-	markerSuivi = L.Marker(null, {
+	markerSuivi = L.Marker([46.7829, -71.2847], {
 		'clickable':false
 		});
 
