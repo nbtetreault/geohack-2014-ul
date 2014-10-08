@@ -17,10 +17,12 @@ function chargerTrajet(){
 		).addTo(map);
 
 	});
+	
+
 }
 
 function chargerArret(){
-	$.getJSON("http://nbtetreault.cartodb.com/api/v2/sql?format=geojson&q=SELECT%20*%20FROM%20public.untitled_table", function(data) {
+	$.getJSON("", function(data) {
 		
 		console.log(data);
 		var myStyle = {
@@ -29,9 +31,7 @@ function chargerArret(){
 			"opacity": 0.65
 		};
 
-
-		defi_dd_arret = data;
-		L.geoJson(defi_dd_arret,{
+		defi_dd_arret = L.geoJson(data,{
 			style:myStyle,
 			onEachFeature:function (feature, layer) {
 					//Récupérer le html
@@ -51,25 +51,22 @@ function chargerArret(){
 }
 
 function chargerPI(){
-$.getJSON("http://nbtetreault.cartodb.com/api/v2/sql?format=geojson&q=SELECT%20*%20FROM%20public.untitled_table", function(data) {
+$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table", function(data) {
 		
-		console.log(data);
+
 		var myStyle = {
 			"color": "#ff7800",
 			"weight": 5,
 			"opacity": 0.65
 		};
 
-
-		defi_dd_pi = data;
-		L.geoJson(defi_dd_pi,{
+		console.log(data);
+		defi_dd_pi = L.geoJson(data,{
 			style:myStyle,
 			onEachFeature:function (feature, layer) {
-					//Récupérer le html
-					var contenuPopup = "test";
-					//if (feature.properties && feature.properties.popupContent) {
-					if(contenuPopup){
-						layer.bindPopup(contenuPopup);
+				
+					if(feature.properties && feature.properties.description){
+						layer.bindPopup(feature.properties.description);
 					//	layer.setIcon();
 					}
 				}
@@ -79,6 +76,8 @@ $.getJSON("http://nbtetreault.cartodb.com/api/v2/sql?format=geojson&q=SELECT%20*
 		).addTo(map);
 
 	});
+	
+	activerLocalisation();
 }
 
 function init(){
@@ -92,10 +91,9 @@ function init(){
 		'clickable':false
 		
 		});
-	chargerTrajet();
 	chargerArret();
+	chargerTrajet();
 	chargerPI();
-	
 
 	
 	var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -106,35 +104,44 @@ function init(){
 	var baseMaps = {"OSM" : osm, "Google Maps": ggl};
 	var overlayMaps = {};
 	L.control.layers(baseMaps, overlayMaps).addTo(map);
-	map.locate({setView: true, maxZoom: 16});
+	
 
 	function onLocationFound(e) {
+		
 	
-		L.Marker(e.latlng).addTo(map);
-	/*
-		var radius = e.accuracy / 2;
+	
 
-		L.marker(e.latlng).addTo(map)
-			.bindPopup("You are within " + radius + " meters from this point").openPopup();
-*/
-
-		markerSuivi.setLatLng(e.latlng);
+		markerSuivi.setLatLng(e.latlng).addTo(map);
 	}
 
 	map.on('locationfound', onLocationFound);
 
 	function onLocationError(e) {
 
-
-		map.setView(L.latLng(46.7811, -71.2736), 16);
+		map.fitBounds(defi_dd_pi.getBounds());
+	//	map.setView(L.latLng(46.7811, -71.2736), 16);
 		
 	}
 
 	map.on('locationerror', onLocationError);
 	
 	L.easyButton( "fa-compass", toggleSuivi , "Activer/désactiver le suivi",map );
+	
+
 }
 
 function toggleSuivi(){
-	map.locate({watch: true})
+	if(map._locateOptions.watch){
+		map.stopLocate();
+		console.log("désactiver la géolocalisation");
+	}else{
+		activerLocalisation();
+		console.log("activer la géolocalisation");
+	}
+	
+}
+
+function activerLocalisation(){
+map.locate({watch: true,enableHighAccuracy:true,timeout:3000});
+
 }
