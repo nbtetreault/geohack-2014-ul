@@ -57,9 +57,8 @@ function init(){
 		zoom: 14
 	});
 
-	markerSuivi = L.Marker({
+	markerSuivi = L.Marker(null, {
 		'clickable':false
-		
 		});
 
 	chargerTrajet();
