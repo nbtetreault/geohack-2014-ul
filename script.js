@@ -54,12 +54,20 @@ $.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM p
 							images = '<img width="100%" src="./fiches/images/' + feature.properties.images + '">';
 						}
 						
+							var monIcone = L.icon({
+								iconUrl: 'pi.png',
+								iconRetinaUrl: 'pi.png',
+								iconSize: [16, 16],
+								iconAnchor: [9, 32]
+							});
+						
 						var popup = L.popup({
 							'keepInView':true,
 							maxHeight:500
-						}).setContent(titre + images + description + description);
+						}).setContent(titre + images + description);
 						
-							layer.bindPopup(popup);
+						layer.bindPopup(popup);
+						layer.options.icon = monIcone;
 					}
 					
 					
