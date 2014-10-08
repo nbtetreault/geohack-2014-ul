@@ -134,12 +134,12 @@ function init(){
 	function onLocationError(e) {
 		swal("Localisation non trouvée!", "On a pas pu trouver ta localisation. Tu es redirigé vers le campus de l'UL.");
 		map.fitBounds(defi_dd_pi.getBounds());
-		
+		map.setZoom(18);
 	}
 
 	map.on('locationerror', onLocationError);
 	
-	L.easyButton( "fa-compass", activerLocalisation , "Activer/désactiver le suivi",map );
+	L.easyButton( "fa-compass", majPositionMarker , "Activer/désactiver le suivi",map );
 	
 	map.on('popupopen', function(e){
 	  controles.removeFrom(map);
@@ -160,7 +160,8 @@ function activerLocalisation(){
 
 }
 
-function majPositionMarker(e){
-
+function majPositionMarker(){
+	map.stopLocate();
+	activerLocalisation();
 }
 
