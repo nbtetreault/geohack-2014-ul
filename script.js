@@ -22,18 +22,11 @@ function chargerTrajet(){
 }
 
 function chargerPI(){
-$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table", function(data) {
+	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table", function(data) {
 		
-
-		var myStyle = {
-			"color": "#ff7800",
-			"weight": 5,
-			"opacity": 0.65
-		};
-
 		console.log(data);
 		defi_dd_pi = L.geoJson(data,{
-			style:myStyle,
+		
 			onEachFeature:function (feature, layer) {
 				
 					if(feature.properties){
@@ -126,6 +119,21 @@ function init(){
 		
 		if(suiviActive){
 			map.setView(e.latlng);
+			//comparer avec le bound
+			var boundPI = defi_dd_pi.getBounds();
+			var ne = boundPI._northEast;
+			var sw = boundPI._southWest;
+			
+			if(ne.lat > e.lat && e.lat > sw.lat 
+				&&
+				sw.lng > e.lng && e.lng > ne.lng){
+				console.log("dans le coin de ul");
+			}else{
+			
+				setTimeout(redirigerUL, 5000);
+
+			}
+			
 		}
 	}
 
@@ -140,6 +148,7 @@ function init(){
 	map.on('locationerror', onLocationError);
 	
 	L.easyButton( "fa-compass", majPositionMarker , "Activer/désactiver le suivi",map );
+	L.easyButton( "fa-question", afficherInfo , "Activer/désactiver le suivi",map );
 	
 	map.on('popupopen', function(e){
 	  controles.removeFrom(map);
@@ -165,3 +174,15 @@ function majPositionMarker(){
 	activerLocalisation();
 }
 
+function redirigerUL(){
+
+	swal("Hors zone.", "Il semble que tu sois hors du campus de l'UL. Nous t'y emmenons.");
+	map.fitBounds(defi_dd_pi.getBounds());
+	map.setZoom(18);				
+	
+}
+
+function afficherInfo(){
+
+$('#information').dialog({title:'Information'});
+}
