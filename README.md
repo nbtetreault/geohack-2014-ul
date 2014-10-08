@@ -13,3 +13,5 @@ Monter une application pour un tour autoguidé pouvant être fait à tout moment
 
 Technologie utilisée: cartoDB et Leaflet.
 
+Si vous êtes sur le site de l'université Laval vous pouvez utiliser la géolocalisation en activant le bouton en haut à gauche.
+
