@@ -1,22 +1,18 @@
-var map;
-var defi_dd_trajet;
-var defi_dd_pi;
-var suiviActive = true;
-var markerSuivi;
-var controles;
+var app = {};
+
 
 function chargerTrajet(){
 
 	//http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet
 	$.getJSON("./fiches/defi_dd_trajet.geojson", function(data) {
 		
-		defi_dd_trajet = L.geoJson(data,
+		app.trajet = L.geoJson(data,
 		{style:
 		{
 			"color":"green",
 			"opacity":0.5
 		}}
-		).addTo(map);
+		).addTo(app.map);
 
 	});
 	
@@ -26,9 +22,8 @@ function chargerTrajet(){
 function chargerPI(){
 	//http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table
 	$.getJSON("./fiches/untitled_table.geojson", function(data) {
-		
-		console.log(data);
-		defi_dd_pi = L.geoJson(data,{
+
+		app.pi = L.geoJson(data,{
 		
 			onEachFeature:function (feature, layer) {
 				
@@ -72,7 +67,7 @@ function chargerPI(){
 
 			}
 	
-		).addTo(map);
+		).addTo(app.map);
 
 	});
 	
@@ -81,7 +76,13 @@ function chargerPI(){
 
 function init(){
 
-	map = L.map('map', {
+	app.trajet = null;
+	app.pi = null;
+	app.suiviActive = true;
+	app.markerSuivi = null;
+	app.controles = null;
+
+	app.map = L.map('map', {
 		center: [46.7829, -71.2847],
 		zoom: 16
 	});
@@ -92,7 +93,7 @@ function init(){
 		iconSize: [32, 54],
 		iconAnchor: [32, 54]
 	});
-	markerSuivi = L.marker([46.7829, -71.2847], {
+	app.markerSuivi = L.marker([46.7829, -71.2847], {
 		'clickable':false,
 		'icon':myIcon
 		});
@@ -103,34 +104,33 @@ function init(){
 	
 	var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; OpenStreetMap contributors'
-	}).addTo(map);
+	}).addTo(app.map);
 	var ggl = new L.Google();
 
 	var baseMaps = {"OSM" : osm, "Google Maps": ggl};
 	var overlayMaps = {};
-	controles = L.control.layers(baseMaps, overlayMaps).addTo(map);
+	app.controles = L.control.layers(baseMaps, overlayMaps).addTo(app.map);
 	
 
 	function onLocationFound(e) {
-		markerSuivi.setLatLng(e.latlng);
-		if(!map.hasLayer(markerSuivi)){
-			markerSuivi.addTo(map)
+		app.markerSuivi.setLatLng(e.latlng);
+		if(!app.map.hasLayer(app.markerSuivi)){
+			app.markerSuivi.addTo(app.map)
 		}
 	
 
-		markerSuivi.setLatLng(e.latlng).addTo(map);
+		app.markerSuivi.setLatLng(e.latlng).addTo(app.map);
 		
-		if(suiviActive){
-			map.setView(e.latlng);
+		if(app.suiviActive){
+			app.map.setView(e.latlng);
 			//comparer avec le bound
-			var boundPI = defi_dd_pi.getBounds();
+			var boundPI = app.pi.getBounds();
 			var ne = boundPI._northEast;
 			var sw = boundPI._southWest;
 			
 			if(ne.lat > e.lat && e.lat > sw.lat 
 				&&
 				sw.lng > e.lng && e.lng > ne.lng){
-				console.log("dans le coin de ul");
 			}else{
 			
 				setTimeout(redirigerUL, 5000);
@@ -140,31 +140,31 @@ function init(){
 		}
 	}
 
-	map.on('locationfound', onLocationFound);
+	app.map.on('locationfound', onLocationFound);
 
 	function onLocationError(e) {
 		swal("Localisation non trouvée!", "On a pas pu trouver ta localisation. Tu es redirigé vers le campus de l'UL.");
-		map.fitBounds(defi_dd_pi.getBounds());
-		map.setZoom(18);
+		app.map.fitBounds(app.pi.getBounds()).setZoom(18);
+
 	}
 
-	map.on('locationerror', onLocationError);
+	app.map.on('locationerror', onLocationError);
 	
-	L.easyButton( "fa-compass", majPositionMarker , "Activer/désactiver le suivi",map );
-	L.easyButton( "fa-question", afficherInfo , "Activer/désactiver le suivi",map );
+	L.easyButton( "fa-compass", majPositionMarker , "Activer/désactiver le suivi", app.map );
+	L.easyButton( "fa-question", afficherInfo , "Activer/désactiver le suivi", app.map );
 	
-	map.on('popupopen', function(e){
-	  controles.removeFrom(map);
+	app.map.on('popupopen', function(e){
+	  app.controles.removeFrom(app.map);
 	});
-	map.on('popupclose', function(e){
-	  controles.addTo(map);
+	app.map.on('popupclose', function(e){
+	  app.controles.addTo(app.map);
 	});
 
 }
 
 function activerLocalisation(){
-	suiviActive = true;
-	map.locate({
+	app.suiviActive = true;
+	app.map.locate({
 		watch: true, 
 		enableHighAccuracy:true,
 		timeout:3000
@@ -173,15 +173,15 @@ function activerLocalisation(){
 }
 
 function majPositionMarker(){
-	map.stopLocate();
+	app.map.stopLocate();
 	activerLocalisation();
 }
 
 function redirigerUL(){
 
 	swal("Hors zone.", "Il semble que tu sois hors du campus de l'UL. Nous t'y emmenons.");
-	map.fitBounds(defi_dd_pi.getBounds());
-	map.setZoom(18);				
+	app.map.fitBounds(app.pi.getBounds()).setZoom(18);	
+
 	
 }
 
