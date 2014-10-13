@@ -143,8 +143,14 @@ function init(){
 	app.map.on('locationfound', onLocationFound);
 
 	function onLocationError(e) {
-		swal("Localisation non trouvée!", "On a pas pu trouver ta localisation. Tu es redirigé vers le campus de l'UL.");
-		app.map.fitBounds(app.pi.getBounds()).setZoom(18);
+		swal({
+			title: "Localisation non trouvée!", 
+			text : "On a pas pu trouver ta localisation. Tu es redirigé vers le campus de l'UL.",
+			showCancelButton : false
+			}, function(){
+			app.map.fitBounds(app.pi.getBounds()).setZoom(18);
+		});
+		
 
 	}
 
@@ -179,8 +185,14 @@ function majPositionMarker(){
 
 function redirigerUL(){
 
-	swal("Hors zone.", "Il semble que tu sois hors du campus de l'UL. Nous t'y emmenons.");
-	app.map.fitBounds(app.pi.getBounds()).setZoom(18);	
+	swal({
+		title : "Hors zone.", 
+		text : "Il semble que tu sois hors du campus de l'UL. Nous t'y emmenons.",
+		showCancelButton : false
+		}, function(){
+		app.map.fitBounds(app.pi.getBounds()).setZoom(18);
+	});
+		
 
 	
 }
