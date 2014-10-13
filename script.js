@@ -6,7 +6,9 @@ var markerSuivi;
 var controles;
 
 function chargerTrajet(){
-	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet", function(data) {
+
+	//http://defidd.cartodb.com/api/v2/sql?format=geojson&q=select%20*%20from%20defi_dd_trajet
+	$.getJSON("./fiches/defi_dd_trajet.geojson", function(data) {
 		
 		defi_dd_trajet = L.geoJson(data,
 		{style:
@@ -22,7 +24,8 @@ function chargerTrajet(){
 }
 
 function chargerPI(){
-	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table", function(data) {
+	//http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table
+	$.getJSON("./fiches/untitled_table.geojson", function(data) {
 		
 		console.log(data);
 		defi_dd_pi = L.geoJson(data,{
