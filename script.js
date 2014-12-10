@@ -21,7 +21,7 @@ function chargerTrajet(){
 
 function chargerPI(){
 	//http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table
-	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM public.untitled_table", function(data) {
+	$.getJSON("http://defidd.cartodb.com/api/v2/sql?format=geojson&q=SELECT * FROM pi", function(data) {
 
 		app.pi = L.geoJson(data,{
 		
